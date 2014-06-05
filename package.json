@@ -1,0 +1,31 @@
+{
+  "name": "meteor-stubs",
+  "description": "Stubs for Meteor core objects",
+  "homepage": "https://github.com/alanning/meteor-stubs",
+  "version": "0.0.1",
+  "dependencies": {},
+  "devDependencies": {},
+  "maintainers": [
+    {
+      "name": "Adrian Lanning",
+      "email": "alanning@gmail.com"
+    }
+  ],
+  "bugs": {
+    "url": "https://github.com/alanning/meteor-stubs/issues"
+  },
+  "licenses": [
+    {
+      "type": "MIT"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/alanning/meteor-stubs.git"
+  },
+  "main": "./index.js",
+  "engines": {
+    "node": ">=0.8.0"
+  },
+  "scripts": {}
+}
