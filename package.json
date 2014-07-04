@@ -2,7 +2,7 @@
   "name": "meteor-stubs",
   "description": "Stubs for Meteor core objects",
   "homepage": "https://github.com/alanning/meteor-stubs",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "dependencies": {},
   "devDependencies": {},
   "maintainers": [
