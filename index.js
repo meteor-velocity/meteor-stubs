@@ -297,8 +297,6 @@ stubs.Session = {
 // MS07 - Template
 //////////////////////////////////////////////////////////////////////
 
-stubs.Template = new TemplateClass();
-
 function TemplateClass () {};
 TemplateClass.prototype = {
   stub: function (templateName) {
@@ -332,12 +330,12 @@ TemplateClass.prototype = {
   }
 };
 
+stubs.Template = new TemplateClass();
+
 
 //////////////////////////////////////////////////////////////////////
 // MS08 - Handlebars
 //////////////////////////////////////////////////////////////////////
-
-stubs.Handlebars = new HandlebarsClass();
 
 function HandlebarsClass () { };
 HandlebarsClass.prototype = {
@@ -346,6 +344,8 @@ HandlebarsClass.prototype = {
     this.helpers[name] = method;
   }
 };
+
+stubs.Handlebars = new HandlebarsClass();
 
 
 
