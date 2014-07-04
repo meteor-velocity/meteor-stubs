@@ -42,7 +42,11 @@
 //////////////////////////////////////////////////////////////////////
 
 
-var stubs = {},
+// Factory methods are used so that each time `MeteorStubs.install` is
+// called, a clean object will be returned.
+// Each stub has one factory associated with it.
+
+var stubFactories = {},
     emptyFn = function () {},
     callbackFn = function (fn) { fn() };
 
@@ -73,11 +77,11 @@ var stubs = {},
         _context = context;
       }
 
-      for (var key in stubs) {
+      for (var key in stubFactories) {
         if (_context[key] && !_originals[key]) {
           _originals[key] = _context[key];
         }
-        _context[key] = stubs[key];
+        _context[key] = stubFactories[key]();
       }
 
     },
@@ -89,7 +93,7 @@ var stubs = {},
      * @method uninstall
      */
     uninstall: function () {
-      for (var key in stubs) {
+      for (var key in stubFactories) {
         if ('undefined' == typeof _originals[key]) {
           delete _context[key];
         } else {
@@ -108,131 +112,149 @@ var stubs = {},
 // Meteor - MS01
 //////////////////////////////////////////////////////////////////////
 
-stubs.Meteor = {
-  isClient: true,
-  isServer: true,
-  instantiationCounts: {},
-  startupFunctions: [],
-  publishFunctions: {},
-  subscribeFunctions: {},
-  methodMap: {},
-  Error: emptyFn,
-  startup: function (newStartupFunction) {
-    this.startupFunctions.push(newStartupFunction);
-  },
-  Collection: collectionFn,
-  SmartCollection: collectionFn,
-  publish: function (modelName, publishFunction) {
-    this.publishFunctions[modelName] = publishFunction;
-  },
-  subscribe: function (modelName, subscribeFunction) {
-    this.subscribeFunctions[modelName] = subscribeFunction;
-    return {
-      ready: function () {
-        return true;
+stubFactories.Meteor = function () { 
+  var _instantiationCounts = {},
+      Meteor;
+
+  function collectionFn (collectionName) {
+    var current = _instantiationCounts[collectionName];
+
+    if (!current) {
+      _instantiationCounts[collectionName] = 1
+    } else {
+      _instantiationCounts[collectionName] = current + 1
+    }
+  }
+
+  Meteor = {
+    isClient: true,
+    isServer: true,
+    instantiationCounts: _instantiationCounts,
+    startupFunctions: [],
+    publishFunctions: {},
+    subscribeFunctions: {},
+    methodMap: {},
+    Error: emptyFn,
+    startup: function (newStartupFunction) {
+      this.startupFunctions.push(newStartupFunction);
+    },
+    Collection: collectionFn,
+    SmartCollection: collectionFn,
+    publish: function (modelName, publishFunction) {
+      this.publishFunctions[modelName] = publishFunction;
+    },
+    subscribe: function (modelName, subscribeFunction) {
+      this.subscribeFunctions[modelName] = subscribeFunction;
+      return {
+        ready: function () {
+          return true;
+        }
+      };
+    },
+    settings: { public: {} },
+    methods: function (map) {
+      for (var name in map) {
+        //noinspection JSUnfilteredForInLoop
+        this.methodMap[name] = map[name];
       }
-    };
-  },
-  settings: { public: {} },
-  methods: function (map) {
-    for (var name in map) {
-      //noinspection JSUnfilteredForInLoop
-      this.methodMap[name] = map[name];
+    },
+    autorun: callbackFn,
+    autosubscribe: callbackFn,
+    call: emptyFn,
+    loggingIn: emptyFn,
+    setInterval: emptyFn,
+    user: function () {
+      return {
+        emails: []
+      };
+    },
+    userId: function () { return null; },
+    loginWithGoogle: emptyFn,
+    logout: emptyFn,
+    require: emptyFn,
+    runStartupMethods: function () {
+      for (var i = 0; i < this.startupFunctions.length; i += 1) {
+        this.startupFunctions[i]();
+      }
     }
-  },
-  autorun: callbackFn,
-  autosubscribe: callbackFn,
-  call: emptyFn,
-  loggingIn: emptyFn,
-  setInterval: emptyFn,
-  user: function () {
-    return {
-      emails: []
-    };
-  },
-  userId: function () { return null; },
-  loginWithGoogle: emptyFn,
-  logout: emptyFn,
-  require: emptyFn,
-  runStartupMethods: function () {
-    for (var i = 0; i < this.startupFunctions.length; i += 1) {
-      this.startupFunctions[i]();
+  };
+
+
+  //////////////////////////////////////////////////////////////////////
+  // Meteor.Collection - MS01.1
+  //////////////////////////////////////////////////////////////////////
+
+  Meteor.Collection.prototype = {
+    insert: emptyFn,
+    find: function () {
+      return {
+        count: emptyFn,
+        fetch: emptyFn,
+        observe: emptyFn,
+        observeChanges: emptyFn
+      };
+    },
+    findOne: emptyFn,
+    update: emptyFn,
+    remove: emptyFn,
+    allow: emptyFn,
+    deny: emptyFn,
+    _ensureIndex: emptyFn,
+
+    // collection hooks
+    before: {
+      insert: emptyFn,
+      update: emptyFn,
+      remove: emptyFn
+    },
+    after: {
+      insert: emptyFn,
+      update: emptyFn,
+      remove: emptyFn
     }
-  }
-};
-
-function collectionFn (collectionName) {
-  var current = stubs.Meteor.instantiationCounts[collectionName];
-
-  if (!current) {
-    stubs.Meteor.instantiationCounts[collectionName] = 1
-  } else {
-    stubs.Meteor.instantiationCounts[collectionName] = current + 1
-  }
-}
+  };  // Meteor.Collection.prototype
 
 
 
-//////////////////////////////////////////////////////////////////////
-// Meteor.Collection - MS01.1
-//////////////////////////////////////////////////////////////////////
 
-stubs.Meteor.Collection.prototype = {
-  insert: emptyFn,
-  find: function () {
-    return {
-      count: emptyFn,
-      fetch: emptyFn,
-      observe: emptyFn,
-      observeChanges: emptyFn
-    };
-  },
-  findOne: emptyFn,
-  update: emptyFn,
-  remove: emptyFn,
-  allow: emptyFn,
-  deny: emptyFn,
-  _ensureIndex: emptyFn,
+  //////////////////////////////////////////////////////////////////////
+  // Meteor.Collection.ObjectID - MS01.2
+  //////////////////////////////////////////////////////////////////////
 
-  // collection hooks
-  before: {
-    insert: emptyFn,
-    update: emptyFn,
-    remove: emptyFn
-  },
-  after: {
-    insert: emptyFn,
-    update: emptyFn,
-    remove: emptyFn
-  }
-};
+  Meteor.Collection.ObjectID = function () {
+    return { _str: '' };
+  };
 
 
-//////////////////////////////////////////////////////////////////////
-// Meteor.Collection.ObjectID - MS01.2
-//////////////////////////////////////////////////////////////////////
 
-stubs.Meteor.Collection.ObjectID = function () {
-  return { _str: '' };
-};
+  //////////////////////////////////////////////////////////////////////
+  // Meteor.users - MS01.3
+  //
+  // Instantiate the users default collection
+  //////////////////////////////////////////////////////////////////////
+
+  Meteor.users = new Meteor.Collection('users');
 
 
-//////////////////////////////////////////////////////////////////////
-// Meteor.users - MS01.3
-//
-// Instantiate the users default collection
-//////////////////////////////////////////////////////////////////////
 
-stubs.Meteor.users = new stubs.Meteor.Collection('users');
+
+  return Meteor;
+
+};  // Meteor
+
+
+
 
 
 //////////////////////////////////////////////////////////////////////
 // Npm - MS02
 //////////////////////////////////////////////////////////////////////
 
-stubs.Npm = {
-  depends: emptyFn,
-  require: emptyFn
+stubFactories.Npm = function () {
+  return {
+    depends: emptyFn,
+    require: emptyFn
+  };
 };
 
 
@@ -240,32 +262,40 @@ stubs.Npm = {
 // MS03 - Deps
 //////////////////////////////////////////////////////////////////////
 
-stubs.Deps = {
-  autorun: callbackFn,
-  autosubscribe: callbackFn,
-  afterFlush: emptyFn
+stubFactories.Deps = function () {
+  return {
+    autorun: callbackFn,
+    autosubscribe: callbackFn,
+    afterFlush: emptyFn
+  };
 };
+
 
 
 //////////////////////////////////////////////////////////////////////
 // MS04 - Package
 //////////////////////////////////////////////////////////////////////
 
-stubs.Package = { 
-  describe: emptyFn 
+stubFactories.Package = function () {
+  return { 
+    describe: emptyFn 
+  };
 };
+
 
 
 //////////////////////////////////////////////////////////////////////
 // MS05 - Random
 //////////////////////////////////////////////////////////////////////
 
-stubs.Random = {
-  id: emptyFn,
-  secret: emptyFn,
-  fraction: emptyFn,
-  choice: emptyFn,
-  hexString: emptyFn
+stubFactories.Random = function () {
+  return {
+    id: emptyFn,
+    secret: emptyFn,
+    fraction: emptyFn,
+    choice: emptyFn,
+    hexString: emptyFn
+  };
 };
 
 
@@ -274,24 +304,25 @@ stubs.Random = {
 // MS06 - Session
 //////////////////////////////////////////////////////////////////////
 
-stubs.Session = {
-  store: {},
-  get: function (key) {
-    return this.store[key];
-  },
-  set: function (key, value) {
-    this.store[key] = value;
-  },
-  equals: function (key, value) {
-    return this.store[key] === value;
-  },
-  setDefault: function (key, value) {
-    if (typeof this.get(key) === 'undefined') {
-      this.set(key, value);
+stubFactories.Session = function () {
+  return {
+    store: {},
+    get: function (key) {
+      return this.store[key];
+    },
+    set: function (key, value) {
+      this.store[key] = value;
+    },
+    equals: function (key, value) {
+      return this.store[key] === value;
+    },
+    setDefault: function (key, value) {
+      if (typeof this.get(key) === 'undefined') {
+        this.set(key, value);
+      }
     }
-  }
+  };
 };
-
 
 //////////////////////////////////////////////////////////////////////
 // MS07 - Template
@@ -330,7 +361,9 @@ TemplateClass.prototype = {
   }
 };
 
-stubs.Template = new TemplateClass();
+stubFactories.Template = function () {
+  return new TemplateClass();
+};
 
 
 //////////////////////////////////////////////////////////////////////
@@ -345,7 +378,9 @@ HandlebarsClass.prototype = {
   }
 };
 
-stubs.Handlebars = new HandlebarsClass();
+stubFactories.Handlebars = function () {
+  return new HandlebarsClass();
+};
 
 
 
@@ -353,14 +388,18 @@ stubs.Handlebars = new HandlebarsClass();
 // MS09 - Accounts
 //////////////////////////////////////////////////////////////////////
 
-stubs.Accounts = {
-  emailTemplates: { enrollAccount: emptyFn },
-  config: emptyFn,
-  urls: {},
-  registerLoginHandler: emptyFn,
-  onCreateUser: emptyFn,
-  loginServiceConfiguration: new stubs.Meteor.Collection('loginserviceconfiguration'),
-  validateNewUser: emptyFn
+stubFactories.Accounts = function () {
+  var Meteor = stubFactories.Meteor();
+
+  return {
+    emailTemplates: { enrollAccount: emptyFn },
+    config: emptyFn,
+    urls: {},
+    registerLoginHandler: emptyFn,
+    onCreateUser: emptyFn,
+    loginServiceConfiguration: new Meteor.Collection('loginserviceconfiguration'),
+    validateNewUser: emptyFn
+  };
 };
 
 
@@ -368,14 +407,18 @@ stubs.Accounts = {
 // MS10 - __meteor_bootstrap__
 //////////////////////////////////////////////////////////////////////
 
-stubs.__meteor_bootstrap__ = {
-  deployConfig: {
-    packages: { 'mongo-livedata': { url: '' } }
-  }
+stubFactories.__meteor_bootstrap__ = function () {
+  return {
+    deployConfig: {
+      packages: { 'mongo-livedata': { url: '' } }
+    }
+  };
 };
 
 //////////////////////////////////////////////////////////////////////
 // MS11 - share
 //////////////////////////////////////////////////////////////////////
 
-stubs.share = {};
+stubFactories.share = function () {
+  return {};
+};
