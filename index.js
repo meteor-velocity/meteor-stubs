@@ -253,7 +253,32 @@ stubFactories.Meteor = function () {
 stubFactories.Npm = function () {
   return {
     depends: emptyFn,
-    require: emptyFn
+    require: function (module) {
+      var mockedModule = {}, nodeModule, key, originalProperty, originalPropertyType;
+
+      try {
+        nodeModule = require(module);
+      } catch(e) {
+        nodeModule = emptyFn;
+      }
+
+      for(key in nodeModule) {
+        originalProperty = nodeModule[key];
+        originalPropertyType = typeof originalProperty;
+
+        if (originalPropertyType === 'function') {
+          mockedModule[key] = emptyFn;
+        } else if (originalPropertyType === 'object') {
+          if (originalProperty instanceof Array) {
+            mockedModule[key] = [];
+          } else {
+            mockedModule[key] = {};
+          }
+        }
+      }
+
+      return mockedModule;
+    }
   };
 };
 
