@@ -38,6 +38,7 @@
 //   MS09 - Accounts
 //   MS10 - __meteor_bootstrap__
 //   MS11 - share
+//   MS12 - account-base
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -422,3 +423,26 @@ stubFactories.__meteor_bootstrap__ = function () {
 stubFactories.share = function () {
   return {};
 };
+
+//////////////////////////////////////////////////////////////////////
+// MS12 - account-base
+//////////////////////////////////////////////////////////////////////
+
+function emptyFn() {}
+
+ServiceConfiguration = {};
+
+ServiceConfiguration.configurations = {
+    remove: emptyFn,
+    insert: emptyFn
+};
+
+ServiceConfiguration.configurations.prototype = {
+    constructor: ServiceConfiguration,
+    remove: emptyFn,
+    insert: emptyFn,
+    extend: function () {
+        return new RouteController()
+    }
+};
+
