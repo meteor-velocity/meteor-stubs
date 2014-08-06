@@ -196,6 +196,7 @@ stubFactories.Meteor = function () {
     },
     findOne: emptyFn,
     update: emptyFn,
+    upsert: emptyFn,
     remove: emptyFn,
     allow: emptyFn,
     deny: emptyFn,
