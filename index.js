@@ -215,6 +215,9 @@ stubFactories.Meteor = function () {
     call: emptyFn,
     loggingIn: emptyFn,
     setInterval: emptyFn,
+    setTimeout: emptyFn,
+    clearInterval: emptyFn,
+    clearTimeout: emptyFn,
     user: function () {
       return {
         emails: []

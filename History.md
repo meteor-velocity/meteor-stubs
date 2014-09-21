@@ -1,3 +1,8 @@
+## v0.0.5
+
+* Include stubs for missing Meteor timer functions
+
+
 ## v0.0.4
 
 * Stub the `Assets` api
