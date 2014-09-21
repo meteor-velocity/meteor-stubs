@@ -39,6 +39,7 @@
 //   MS50 - __meteor_bootstrap__
 //   MS55 - share
 //   MS60 - Mongo
+//   MS65 - Assets
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -480,4 +481,16 @@ stubFactories.Mongo = function () {
   Mongo.Cursor.prototype = prototypes.Cursor;
 
   return Mongo;
+};
+
+
+//////////////////////////////////////////////////////////////////////
+// MS65 - Assets
+//////////////////////////////////////////////////////////////////////
+
+stubFactories.Assets = function () {
+  return {
+    getText: stringFn,
+    getBinary: emptyFn
+  }
 };

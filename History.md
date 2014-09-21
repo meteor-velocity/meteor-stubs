@@ -1,3 +1,8 @@
+## v0.0.4
+
+* Stub the `Assets` api
+
+
 ## v0.0.3
 
 * Support 0.9.1 new symbols (Mongo, Tracker)
