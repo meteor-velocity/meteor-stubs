@@ -1,7 +1,6 @@
 /*jshint -W020, -W079 */
 "use strict";
 
-
 //////////////////////////////////////////////////////////////////////
 // Meteor Stubs
 //
@@ -24,20 +23,22 @@
 // Table of Contents:
 //
 //   MS00 - MeteorStubs
-//   MS01 - Meteor
-//     MS01-1 - Meteor.Collection
-//     MS01-2 - Meteor.Collection.ObjectID
-//     MS01-3 - Meteor.users
-//   MS02 - Npm
-//   MS03 - Deps
-//   MS04 - Package
-//   MS05 - Random
-//   MS06 - Session
-//   MS07 - Template
-//   MS08 - Handlebars
-//   MS09 - Accounts
-//   MS10 - __meteor_bootstrap__
-//   MS11 - share
+//   MS01 - Common prototypes
+//   MS05 - Meteor
+//     MS05-1 - Meteor.Collection
+//     MS05-2 - Meteor.Collection.ObjectID
+//     MS05-3 - Meteor.users
+//   MS10 - Npm
+//   MS15 - Deps / Tracker
+//   MS20 - Package
+//   MS25 - Random
+//   MS30 - Session
+//   MS35 - Template
+//   MS40 - Handlebars
+//   MS45 - Accounts
+//   MS50 - __meteor_bootstrap__
+//   MS55 - share
+//   MS60 - Mongo
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -48,6 +49,7 @@
 
 var stubFactories = {},
     emptyFn = function () {},
+    stringFn = function () { return '' },
     callbackFn = function (fn) { fn() };
 
 
@@ -109,10 +111,59 @@ var stubFactories = {},
 
 
 //////////////////////////////////////////////////////////////////////
-// Meteor - MS01
+// Common Prototypes - MS01
 //////////////////////////////////////////////////////////////////////
 
-stubFactories.Meteor = function () { 
+var prototypes = {
+
+  Collection: {
+    insert: emptyFn,
+    find: new function () {},
+    findOne: emptyFn,
+    update: emptyFn,
+    remove: emptyFn,
+    allow: emptyFn,
+    deny: emptyFn,
+    _ensureIndex: emptyFn,
+
+    // collection hooks
+    before: {
+      insert: emptyFn,
+      update: emptyFn,
+      remove: emptyFn
+    },
+    after: {
+      insert: emptyFn,
+      update: emptyFn,
+      remove: emptyFn
+    }
+  },  // end Collection
+
+  Cursor: {
+    count: emptyFn,
+    forEach: emptyFn,
+    map: emptyFn,
+    fetch: emptyFn,
+    observe: emptyFn,
+    observeChanges: emptyFn
+  },
+
+  ObjectID: {
+    getTimestamp: stringFn,
+    toHexString: stringFn,
+    toJSONValue: stringFn
+  }
+
+};  // end prototypes
+
+prototypes.Collection.find.prototype = prototypes.Cursor;
+
+
+//////////////////////////////////////////////////////////////////////
+// Meteor - MS05
+//////////////////////////////////////////////////////////////////////
+
+stubFactories.Meteor = function () {
   var _instantiationCounts = {},
       Meteor;
 
@@ -181,54 +232,27 @@ stubFactories.Meteor = function () {
 
 
   //////////////////////////////////////////////////////////////////////
-  // Meteor.Collection - MS01.1
+  // Meteor.Collection - MS05.1
   //////////////////////////////////////////////////////////////////////
 
-  Meteor.Collection.prototype = {
-    insert: emptyFn,
-    find: function () {
-      return {
-        count: emptyFn,
-        fetch: emptyFn,
-        observe: emptyFn,
-        observeChanges: emptyFn
-      };
-    },
-    findOne: emptyFn,
-    update: emptyFn,
-    remove: emptyFn,
-    allow: emptyFn,
-    deny: emptyFn,
-    _ensureIndex: emptyFn,
-
-    // collection hooks
-    before: {
-      insert: emptyFn,
-      update: emptyFn,
-      remove: emptyFn
-    },
-    after: {
-      insert: emptyFn,
-      update: emptyFn,
-      remove: emptyFn
-    }
-  };  // Meteor.Collection.prototype
+  Meteor.Collection.prototype = prototypes.Collection; 
 
 
 
 
   //////////////////////////////////////////////////////////////////////
-  // Meteor.Collection.ObjectID - MS01.2
+  // Meteor.Collection.ObjectID - MS05.2
   //////////////////////////////////////////////////////////////////////
 
   Meteor.Collection.ObjectID = function () {
     return { _str: '' };
   };
+  Meteor.Collection.ObjectID.prototype = prototypes.ObjectID
 
 
 
   //////////////////////////////////////////////////////////////////////
-  // Meteor.users - MS01.3
+  // Meteor.users - MS05.3
   //
   // Instantiate the users default collection
   //////////////////////////////////////////////////////////////////////
@@ -247,7 +271,7 @@ stubFactories.Meteor = function () {
 
 
 //////////////////////////////////////////////////////////////////////
-// Npm - MS02
+// Npm - MS10
 //////////////////////////////////////////////////////////////////////
 
 stubFactories.Npm = function () {
@@ -259,7 +283,7 @@ stubFactories.Npm = function () {
 
 
 //////////////////////////////////////////////////////////////////////
-// MS03 - Deps
+// MS15 - Deps / Tracker
 //////////////////////////////////////////////////////////////////////
 
 stubFactories.Deps = function () {
@@ -269,11 +293,11 @@ stubFactories.Deps = function () {
     afterFlush: emptyFn
   };
 };
-
+stubFactories.Tracker = stubFactories.Deps
 
 
 //////////////////////////////////////////////////////////////////////
-// MS04 - Package
+// MS20 - Package
 //////////////////////////////////////////////////////////////////////
 
 stubFactories.Package = function () {
@@ -285,7 +309,7 @@ stubFactories.Package = function () {
 
 
 //////////////////////////////////////////////////////////////////////
-// MS05 - Random
+// MS25 - Random
 //////////////////////////////////////////////////////////////////////
 
 stubFactories.Random = function () {
@@ -301,7 +325,7 @@ stubFactories.Random = function () {
 
 
 //////////////////////////////////////////////////////////////////////
-// MS06 - Session
+// MS30 - Session
 //////////////////////////////////////////////////////////////////////
 
 stubFactories.Session = function () {
@@ -325,7 +349,7 @@ stubFactories.Session = function () {
 };
 
 //////////////////////////////////////////////////////////////////////
-// MS07 - Template
+// MS35 - Template
 //////////////////////////////////////////////////////////////////////
 
 function TemplateClass () {};
@@ -367,7 +391,7 @@ stubFactories.Template = function () {
 
 
 //////////////////////////////////////////////////////////////////////
-// MS08 - Handlebars
+// MS40 - Handlebars
 //////////////////////////////////////////////////////////////////////
 
 function HandlebarsClass () { };
@@ -385,7 +409,7 @@ stubFactories.Handlebars = function () {
 
 
 //////////////////////////////////////////////////////////////////////
-// MS09 - Accounts
+// MS45 - Accounts
 //////////////////////////////////////////////////////////////////////
 
 stubFactories.Accounts = function () {
@@ -404,7 +428,7 @@ stubFactories.Accounts = function () {
 
 
 //////////////////////////////////////////////////////////////////////
-// MS10 - __meteor_bootstrap__
+// MS50 - __meteor_bootstrap__
 //////////////////////////////////////////////////////////////////////
 
 stubFactories.__meteor_bootstrap__ = function () {
@@ -416,9 +440,44 @@ stubFactories.__meteor_bootstrap__ = function () {
 };
 
 //////////////////////////////////////////////////////////////////////
-// MS11 - share
+// MS55 - share
 //////////////////////////////////////////////////////////////////////
 
 stubFactories.share = function () {
   return {};
+};
+
+
+//////////////////////////////////////////////////////////////////////
+// MS60 - Mongo
+//////////////////////////////////////////////////////////////////////
+
+stubFactories.Mongo = function () {
+  var _instantiationCounts = {},
+      Mongo;
+
+  function collectionFn (collectionName) {
+    var current = _instantiationCounts[collectionName];
+
+    if (!current) {
+      _instantiationCounts[collectionName] = 1
+    } else {
+      _instantiationCounts[collectionName] = current + 1
+    }
+  }
+
+  Mongo = {
+    instantiationCounts: _instantiationCounts,
+    Collection: collectionFn,
+    Cursor: emptyFn,
+    ObjectID: function () {
+      return { _str: '' };
+    }
+  };
+
+  Mongo.Collection.prototype = stubFactories.Meteor().Collection.prototype;
+  Mongo.ObjectID.prototype = prototypes.ObjectID;
+  Mongo.Cursor.prototype = prototypes.Cursor;
+
+  return Mongo;
 };

@@ -1,3 +1,8 @@
+## v0.0.3
+
+* Support 0.9.1 new symbols (Mongo, Tracker)
+
+
 ## v0.0.2
 
 * Refactor to support client-side use in browsers
