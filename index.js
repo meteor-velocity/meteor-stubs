@@ -212,7 +212,25 @@ stubFactories.Meteor = function () {
     },
     autorun: callbackFn,
     autosubscribe: callbackFn,
-    call: emptyFn,
+    valuesToArray: function (obj) {
+      return Object.keys(obj).map(function (key) { return obj[key]; });
+    },
+    call: function(name, args) {
+      var argumentArray = Meteor.valuesToArray(arguments);
+      argumentArray.splice(0, 1);
+      Meteor.methodMap[name].apply(this, argumentArray);
+    },
+    callInContext: function(name, context, args) {
+      var argumentArray = Meteor.valuesToArray(arguments);
+      argumentArray.splice(0, 2);
+      Meteor.methodMap[name].apply(context, argumentArray);
+    },
+    apply: function(name, args) {
+      Meteor.methodMap[name].apply(this, args);
+    },
+    applyInContext: function(name, context, args) {
+      Meteor.methodMap[name].apply(context, args);
+    },
     loggingIn: emptyFn,
     setInterval: emptyFn,
     setTimeout: emptyFn,
