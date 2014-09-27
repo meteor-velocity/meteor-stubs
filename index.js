@@ -119,7 +119,9 @@ var prototypes = {
 
   Collection: {
     insert: emptyFn,
-    find: new function () {},
+    find: function () {
+      return new Mongo.Cursor();
+    },
     findOne: emptyFn,
     update: emptyFn,
     remove: emptyFn,
@@ -156,8 +158,6 @@ var prototypes = {
   }
 
 };  // end prototypes
-
-prototypes.Collection.find.prototype = prototypes.Cursor;
 
 
 //////////////////////////////////////////////////////////////////////
