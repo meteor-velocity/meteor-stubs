@@ -24,6 +24,7 @@
 //
 //   MS00 - MeteorStubs
 //   MS01 - Common prototypes
+//          Collection, Cursor, ObjectId
 //   MS05 - Meteor
 //     MS05-1 - Meteor.Collection
 //     MS05-2 - Meteor.Collection.ObjectID
@@ -125,6 +126,7 @@ var prototypes = {
     },
     findOne: emptyFn,
     update: emptyFn,
+    upsert: emptyFn,
     remove: emptyFn,
     allow: emptyFn,
     deny: emptyFn,
