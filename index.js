@@ -36,6 +36,7 @@
 //   MS35 - Template
 //   MS40 - Handlebars
 //   MS45 - Accounts
+//   MS48 - ServiceConfiguration
 //   MS50 - __meteor_bootstrap__
 //   MS55 - share
 //   MS60 - Mongo
@@ -400,6 +401,7 @@ stubFactories.Session = function () {
   };
 };
 
+
 //////////////////////////////////////////////////////////////////////
 // MS35 - Template
 //////////////////////////////////////////////////////////////////////
@@ -476,6 +478,27 @@ stubFactories.Accounts = function () {
     loginServiceConfiguration: new Meteor.Collection('loginserviceconfiguration'),
     validateNewUser: emptyFn
   };
+};
+
+
+//////////////////////////////////////////////////////////////////////
+// MS48 - ServiceConfiguration
+//////////////////////////////////////////////////////////////////////
+
+function ServiceConfiguration () {};
+ServiceConfiguration.configurations = {
+    remove: emptyFn,
+    insert: emptyFn
+};
+ServiceConfiguration.configurations.prototype = {
+    constructor: ServiceConfiguration,
+    remove: emptyFn,
+    insert: emptyFn,
+    extend: emptyFn
+};
+
+stubFactories.ServiceConfiguration = function () {
+  return new ServiceConfiguration()
 };
 
 
