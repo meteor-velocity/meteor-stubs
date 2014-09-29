@@ -1,3 +1,8 @@
+## v0.0.6
+
+* Include stubs for Meteor.call/apply, ServiceConfiguration, and Collection upsert
+
+
 ## v0.0.5
 
 * Include stubs for missing Meteor timer functions
