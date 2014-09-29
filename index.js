@@ -186,7 +186,11 @@ stubFactories.Meteor = function () {
     publishFunctions: {},
     subscribeFunctions: {},
     methodMap: {},
-    Error: emptyFn,
+    Error: function(error, reason, details) {
+      if (error) this.error = error;
+      if (reason) this.reason = reason;
+      if (details) this.details = details;
+    },
     startup: function (newStartupFunction) {
       this.startupFunctions.push(newStartupFunction);
     },
@@ -212,7 +216,51 @@ stubFactories.Meteor = function () {
     },
     autorun: callbackFn,
     autosubscribe: callbackFn,
-    call: emptyFn,
+    valuesToArray: function (obj) {
+      return Object.keys(obj).map(function (key) { return obj[key]; });
+    },
+    executeFunction: function(func, args) {
+      var exception = null;
+      var result = null;
+
+      try {
+        result = func();
+      } catch (ex) {
+        exception = ex;
+      }
+
+      // if we specify the callback function execute it
+      if (args.length > 0 && typeof(args[args.length - 1]) === "function") {
+        args[args.length - 1](exception, result);
+      } else if (exception != null) {
+        // rethrow exception
+        throw exception;
+      }
+    },
+    call: function(name, args) {
+      var argumentArray = Meteor.valuesToArray(arguments);
+      argumentArray.splice(0, 1);
+      Meteor.executeFunction(function() {
+        Meteor.methodMap[name].apply(this, argumentArray);
+      }, argumentArray);
+    },
+    callInContext: function(name, context, args) {
+      var argumentArray = Meteor.valuesToArray(arguments);
+      argumentArray.splice(0, 2);
+      Meteor.executeFunction(function() {
+        Meteor.methodMap[name].apply(context, argumentArray);
+      }, argumentArray);
+    },
+    apply: function(name, args) {
+      Meteor.executeFunction(function() {
+        Meteor.methodMap[name].apply(this, args);
+      }, args);
+    },
+    applyInContext: function(name, context, args) {
+      Meteor.executeFunction(function() {
+        Meteor.methodMap[name].apply(context, args);
+      }, args);
+    },
     loggingIn: emptyFn,
     setInterval: emptyFn,
     setTimeout: emptyFn,
