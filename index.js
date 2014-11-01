@@ -1,4 +1,5 @@
 /*jshint -W020, -W079 */
+/*global MeteorStubs: true*/
 "use strict";
 
 //////////////////////////////////////////////////////////////////////
@@ -66,7 +67,7 @@ var stubFactories = {},
   var _context = global,
       _originals = {};
 
-  global.MeteorStubs = {
+  var meteorStubs = {
 
     /**
      * Install Meteor stubs into global context
@@ -108,6 +109,12 @@ var stubFactories = {},
     }
 
   };  // end global.MeteorStubs
+
+  if (typeof Meteor === 'undefined') {
+    global.MeteorStubs = meteorStubs;
+  } else {
+    MeteorStubs = meteorStubs;
+  }
 
 })(typeof global === 'undefined' ? window : global);
 
