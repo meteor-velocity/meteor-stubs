@@ -255,24 +255,24 @@ stubFactories.Meteor = function () {
       var argumentArray = Meteor.valuesToArray(arguments);
       argumentArray.splice(0, 1);
       return Meteor.executeFunction(function() {
-        Meteor.methodMap[name].apply(this, argumentArray);
+        return Meteor.methodMap[name].apply(this, argumentArray);
       }, argumentArray);
     },
     callInContext: function(name, context, args) {
       var argumentArray = Meteor.valuesToArray(arguments);
       argumentArray.splice(0, 2);
       return Meteor.executeFunction(function() {
-        Meteor.methodMap[name].apply(context, argumentArray);
+        return Meteor.methodMap[name].apply(context, argumentArray);
       }, argumentArray);
     },
     apply: function(name, args) {
       return Meteor.executeFunction(function() {
-        Meteor.methodMap[name].apply(this, args);
+        return Meteor.methodMap[name].apply(this, args);
       }, args);
     },
     applyInContext: function(name, context, args) {
       return Meteor.executeFunction(function() {
-        Meteor.methodMap[name].apply(context, args);
+        return Meteor.methodMap[name].apply(context, args);
       }, args);
     },
     loggingIn: emptyFn,
