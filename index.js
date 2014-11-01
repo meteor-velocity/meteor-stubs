@@ -242,32 +242,36 @@ stubFactories.Meteor = function () {
       // if we specify the callback function execute it
       if (args.length > 0 && typeof(args[args.length - 1]) === "function") {
         args[args.length - 1](exception, result);
-      } else if (exception != null) {
-        // rethrow exception
-        throw exception;
+      } else {
+        if (exception != null) {
+          // rethrow exception
+          throw exception;
+        } else if (Meteor.isServer) {
+          return result;
+        }
       }
     },
     call: function(name, args) {
       var argumentArray = Meteor.valuesToArray(arguments);
       argumentArray.splice(0, 1);
-      Meteor.executeFunction(function() {
+      return Meteor.executeFunction(function() {
         Meteor.methodMap[name].apply(this, argumentArray);
       }, argumentArray);
     },
     callInContext: function(name, context, args) {
       var argumentArray = Meteor.valuesToArray(arguments);
       argumentArray.splice(0, 2);
-      Meteor.executeFunction(function() {
+      return Meteor.executeFunction(function() {
         Meteor.methodMap[name].apply(context, argumentArray);
       }, argumentArray);
     },
     apply: function(name, args) {
-      Meteor.executeFunction(function() {
+      return Meteor.executeFunction(function() {
         Meteor.methodMap[name].apply(this, args);
       }, args);
     },
     applyInContext: function(name, context, args) {
-      Meteor.executeFunction(function() {
+      return Meteor.executeFunction(function() {
         Meteor.methodMap[name].apply(context, args);
       }, args);
     },
