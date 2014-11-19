@@ -191,6 +191,7 @@ stubFactories.Meteor = function () {
   Meteor = {
     isClient: true,
     isServer: true,
+    absoluteUrl: emptyFn,
     instantiationCounts: _instantiationCounts,
     startupFunctions: [],
     publishFunctions: {},
