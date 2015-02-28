@@ -129,6 +129,7 @@ var prototypes = {
   Collection: {
     insert: emptyFn,
     find: function () {
+      var Mongo = stubFactories.Mongo();
       return new Mongo.Cursor();
     },
     findOne: emptyFn,
