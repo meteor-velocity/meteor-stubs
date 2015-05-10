@@ -121,7 +121,14 @@ var stubFactories = {},
   if (typeof Meteor === 'undefined') {
     global.MeteorStubs = meteorStubs;
   } else {
-    MeteorStubs = meteorStubs;
+    try {
+      MeteorStubs = meteorStubs;
+    } catch (error) {
+      global.MeteorStubs = meteorStubs;
+    }
+    if (Meteor.isClient) {
+      global.MeteorStubs = meteorStubs;
+    }
   }
 
 })(typeof global === 'undefined' ? window : global);
