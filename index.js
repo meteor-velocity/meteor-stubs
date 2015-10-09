@@ -624,10 +624,7 @@ stubFactories.Accounts = function () {
 //////////////////////////////////////////////////////////////////////
 
 function ServiceConfiguration () {}
-ServiceConfiguration.configurations = {
-    remove: emptyFn,
-    insert: emptyFn
-};
+ServiceConfiguration.configurations = prototypes.Collection;
 ServiceConfiguration.configurations.prototype = {
     constructor: ServiceConfiguration,
     remove: emptyFn,
