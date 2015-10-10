@@ -1,7 +1,7 @@
 Package.describe({
   name: 'velocity:meteor-stubs',
   summary: 'Meteor stubs and mocks for unit testing.',
-  version: '1.1.0',
+  version: '1.1.1',
   git: 'https://github.com/meteor-velocity/meteor-stubs'
 });
 
