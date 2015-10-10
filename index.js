@@ -9,10 +9,10 @@
 //////////////////////////////////////////////////////////////////////
 // Meteor Stubs
 //
-// Stubs for the core Meteor objects.  
+// Stubs for the core Meteor objects.
 //
 // Usage:
-//   
+//
 //   MeteorStubs.install()   - installs stubs into the global object
 //                             (either `global` or `window`)
 //   MeteorStubs.uninstall() - restore global object fields to their
@@ -81,7 +81,7 @@ var stubFactories = {},
      * Install Meteor stubs into global context
      *
      * @method install
-     * @param {Object} [context] Optional. The context to attach 
+     * @param {Object} [context] Optional. The context to attach
      *                 stubs to.  Default: the global context.
      */
     install: function (context) {
@@ -373,7 +373,7 @@ stubFactories.Meteor = function () {
   // Meteor.Collection - MS05.1
   //////////////////////////////////////////////////////////////////////
 
-  Meteor.Collection.prototype = prototypes.Collection; 
+  Meteor.Collection.prototype = prototypes.Collection;
 
 
 
@@ -458,7 +458,7 @@ stubFactories.Deps = stubFactories.Tracker
 //////////////////////////////////////////////////////////////////////
 
 stubFactories.Package = function () {
-  return { 
+  return {
     describe: emptyFn,
     onUse: emptyFn,
     onTest: emptyFn,
@@ -623,20 +623,13 @@ stubFactories.Accounts = function () {
 // MS48 - ServiceConfiguration
 //////////////////////////////////////////////////////////////////////
 
-function ServiceConfiguration () {}
-ServiceConfiguration.configurations = {
-    remove: emptyFn,
-    insert: emptyFn
-};
-ServiceConfiguration.configurations.prototype = {
-    constructor: ServiceConfiguration,
-    remove: emptyFn,
-    insert: emptyFn,
-    extend: emptyFn
-};
-
 stubFactories.ServiceConfiguration = function () {
-  return new ServiceConfiguration()
+  var Mongo = stubFactories.Mongo();
+  var ServiceConfiguration = {
+    configurations: new Mongo.Collection('meteor_accounts_loginServiceConfiguration')
+  }
+
+  return ServiceConfiguration;
 };
 
 

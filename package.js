@@ -7,6 +7,6 @@ Package.describe({
 
 Package.onUse(function (api) {
   api.addFiles('index.js');
-  api.addFiles('index.js', ['client', 'server'], {isAsset: true});
+  api.addAssets('index.js', ['client', 'server']);
   api.export('MeteorStubs');
 });
